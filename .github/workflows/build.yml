@@ -1,0 +1,20 @@
+name: Windows Build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Project
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cl /nologo /std:c++17 /EHsc /O2 /MT /permissive- /DUNICODE /D_UNICODE fps_booster.cpp /Fe:fps_booster.exe /link /SUBSYSTEM:CONSOLE
+          cl /nologo /std:c++17 /EHsc /O2 /MT /LD afx_hook.cpp /Fe:afx_hook.dll
+      - name: Upload Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-files
+          path: |
+            fps_booster.exe
+            afx_hook.dll
